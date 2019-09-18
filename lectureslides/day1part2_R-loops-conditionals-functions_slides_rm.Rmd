@@ -20,6 +20,7 @@ notes<-params$notes
 ```{r revisiting the data}
 gapminder <- read.csv(here::here("data", "gapminder5.csv"))
 head(gapminder)
+names(gapminder)
 ```
 
 ## Sidebar: the `here` package
@@ -200,6 +201,17 @@ for (i in conts) {
 ## nested `for` loop exercise!
 
 - Has the gap in life expectancy between countries on different continents narrowed over time?
+```{r}
+for (i in conts) {
+  print(paste0("Continent: ", i))
+  for (j in years) {
+    sd_le <- sd(gapminder$lifeExp[gapminder$continent == i & 
+                                          gapminder$year == j], 
+                      na.rm = T)
+    print(paste(j, ": ", sd_le))
+  }
+}
+```
 
 ## nested `for` loop exercise!
 
@@ -309,13 +321,13 @@ while (i < 1987) {
 ## results
 
 ```{r while loop exercise}
-i <-  1987 # define the interator
+j <-  1987 # define the interator
 
-while (i <= 2002) {
-  sd_le <- sd(gapminder$lifeExp[gapminder$year == i])
-  print(paste0(i, ": ", sd_le)
+while (j <= 2002) {
+  sd_le <- sd(gapminder$lifeExp[gapminder$year == j], na.rm=T)
+  print(paste0(j, ": ", sd_le)
         )
-  i <- i + 5 # increase the iterator by the interval between years
+  j <- j + 1 # increase the iterator by the interval between years
 }
 ```
 
@@ -436,12 +448,27 @@ for (i in unique(gapminder$continent)) {
 
 Write a `for` loop that reports the mean population for years greater than or equal to 1987. Make sure the loop prints a message if the condition is not met!
 
+```{r}
+
+for (i in unique(gapminder$year)) {
+  tmp <- mean(gapminder$pop[gapminder$year==i])
+  if (i>=1987){
+    print (paste("Mean Population of", i, "is", tmp))
+  }
+  else{
+    print (paste("Year", i, "is less than 1987"))
+  }
+}
+
+
+```
+
 ## Putting `for` and `if/else` together
 
 ```{r for if else exercise}
 for (i in years) {
   if (i >= 1987) {
-    mean_pop <- mean(gapminder$lifeExp[gapminder$year == i])
+    mean_pop <- mean(gapminder$pop[gapminder$year == i])
     print(paste0(i, ": ", mean_pop))
   } else {
     print("Sorry, year is less than 1987")
@@ -486,13 +513,15 @@ get_values <-
   }
 ```
 
+
 ## Writing a more substantial function
 
 - Let's write a function that prints the mean and standard deviation for life expentancy for a given country in the `gapminder` dataset
 
 ```{r writing a function}
 report_mean_sd <- 
-  function(df, variable, country) {
+  function(df, variable, country) {new_data<-data[is.na(data$Ozone))]
+
     var <- df[[variable]][df$country == country]
     m_le <- mean(var)
     sd_le <- sd(var)
@@ -509,6 +538,25 @@ report_mean_sd(gapminder, "lifeExp", "Bulgaria")
 
 - Write a function that reports the mean, median, minimum, and maximum for life expectancy for a continent in `gapminder`
 - Hint: `min`, `max`
+```{r}
+min_max <- function(df, variable, continent) {
+  new <- df[variable][df$continent==continent]
+  new_min<-min(new)
+  new_max<-max(new)
+  new_mean<-mean(new)
+  new_median<-median(new)
+  cat("Continent:", continent, 
+        "\nMin Life Expectancy:", new_min,
+        "\nMax Life Expectancy:", new_max,
+        "\nMean Life Expectancy:", new_mean,
+        "\nMedian:", new_median
+      )
+}
+
+min_max(gapminder, "lifeExp", "Asia")
+## df[[variable]]: using with a string, can also be used as df[, variable]
+```
+
 
 ## Create your own function
 
@@ -576,3 +624,4 @@ for (i in years) {
 2) Save as: `Day1Part2RExercise_LastnameFirstname.Rmd`.
 2) Read in the gapminder data set
 3) As you answer questions, be sure to annotate your work with as much detail as possible!
+

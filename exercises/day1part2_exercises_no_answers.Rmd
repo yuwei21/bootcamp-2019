@@ -28,6 +28,10 @@ Load the `gapminder` dataset.
 
 ```{r}
 gapminder <- read.csv(here::here("data/gapminder5.csv"), stringsAsFactors=FALSE)
+head(gapminder)
+gapminder$country <- as.character(gapminder$country)
+gapminder$continent <- as.character(gapminder$continent)
+str(gapminder)
 ```
 
 
@@ -49,11 +53,28 @@ if(any(gapminder$year == year)){
   print(paste("No records for year",year))
 }
 ```
+```{r}
+obs <- nrow(gapminder)
+for (i in obs){
+  gapminder[i, "log_gdpPercap"] <- log(gapminder[i, "gdpPercap"])
+  gapminder[i, "log_pop"] <- log(gapminder[i, "pop"])
+}
+
+gapminder$log_gdpPercap <- log(gapminder$gdpPercap)
+
+```
 
 
 ## Loop and If Statements
 
 Write a script that finds the mean life expectancy by country for countries whose population is below the mean for the dataset
+```{r}
+country <- unique(gapminder$country)
+for (i in country){
+  mean_cn <- mean(gapminder$lifeExp[gapminder$country==i], na.rm=T)
+}
+```
+
 
 Write a script that loops through the `gapminder` data by continent and prints out whether the mean life expectancy is smaller than 50, between 50 and 70, or greater than 70.
 
